@@ -9,6 +9,8 @@ environment variables:
 * `JENKINS_ADMIN_USER` Name of the admin user to create.
 * `JENKINS_ADMIN_PASSWORD`: Password of this user.
 * `JENKINS_PLUGINS` The names of the Jenkins plugins to install.
+* `JENKINS_ADMIN_EMAIL` Email address of the Jenkins admin.
+  Notification emails are going out from this address.
 
 Environment variables for SMTP:
 * `JENKINS_SMTP_HOST` SMTP host, defaults to `localhost`.

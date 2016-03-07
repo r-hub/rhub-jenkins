@@ -110,6 +110,25 @@ cat >> ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
 _EOF_
 
 # -----------------------------------------------------------------------
+# Email address for the admin. Emails are going out with this
+# email address, so it is good to set it.
+
+if [ -n "${JENKINS_ADMIN_EMAIL}" ]; then
+    if [ ! -d "${JENKINS_HOME}/init.groovy.d" ]; then
+	mkdir ${JENKINS_HOME}/init.groovy.d
+    fi
+    cat > ${JENKINS_HOME}/init.groovy.d/initAdminEMail.groovy <<_EOF_
+  import jenkins.model.*
+  import java.util.logging.Logger
+  def instance = Jenkins.getInstance()
+  def jenkinsLocationConfiguration = JenkinsLocationConfiguration.get()
+  jenkinsLocationConfiguration.setAdminAddress("${JENKINS_ADMIN_EMAIL}")
+  jenkinsLocationConfiguration.save()
+  instance.save()
+_EOF_
+fi
+
+# -----------------------------------------------------------------------
 
 unset JENKINS_ADMIN_USER
 unset JENKINS_ADMIN_PASSWORD
