@@ -104,7 +104,7 @@ if [ -n "${JENKINS_SMTP_USER_NAME}" ] &&
 _EOF_
 fi
 
-cat > ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
+cat >> ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
   desc.save()
   inst.save()
 _EOF_
