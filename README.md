@@ -12,4 +12,7 @@ encironment variables:
 
 ## License
 
+A significant part of the install script is modified from
+https://github.com/blacklabelops/jenkins
+
 MIT @ Steffen Bleul, R Consortium
