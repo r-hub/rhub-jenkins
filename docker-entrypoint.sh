@@ -94,7 +94,6 @@ cat > ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
   desc.setSmtpPort("${JENKINS_SMTP_PORT:-25}")
   desc.setCharset("${JENKINS_SMTP_CHARSET:-UTF-8}")
 _EOF_
-fi
 
 # No auth needed by default, the mail server should only accept
 # mail from localhost if authentication is not set.
