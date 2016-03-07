@@ -5,6 +5,9 @@
 
 set -e
 
+# -----------------------------------------------------------------------
+# Activate security and add admin user
+
 if [ -n "${JENKINS_ADMIN_USER}" ] && [ -n "${JENKINS_ADMIN_PASSWORD}" ]; then
   mkdir -p ${JENKINS_HOME}/init.groovy.d
 
@@ -24,6 +27,9 @@ if (!users || users.empty) {
 instance.save()
 _EOF_
 fi
+
+# -----------------------------------------------------------------------
+# Install plugins
 
 if [ -n "${JENKINS_PLUGINS}" ]; then
   if [ ! -d "${JENKINS_HOME}/init.groovy.d" ]; then
@@ -71,7 +77,47 @@ if [ -n "${JENKINS_PLUGINS}" ]; then
 _EOF_
 fi
 
+# -----------------------------------------------------------------------
+# Set up SMTP, so that Jenkins can send email
+
+if [ ! -d "${JENKINS_HOME}/init.groovy.d" ]; then
+    mkdir ${JENKINS_HOME}/init.groovy.d
+fi
+
+cat > ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
+  import jenkins.model.*
+  def inst = Jenkins.getInstance()
+  def desc = inst.getDescriptor("hudson.tasks.Mailer")
+  desc.setReplyToAddress("${JENKINS_SMTP_REPLYTO_ADDRESS:-<donotreply@>}")
+  desc.setSmtpHost("${JENKINS_SMTP_HOST:-localhost}")
+  desc.setUseSsl(${JENKINS_SMTP_USE_SSL:-false})
+  desc.setSmtpPort("${JENKINS_SMTP_PORT:-25}")
+  desc.setCharset("${JENKINS_SMTP_CHARSET:-UTF-8}")
+_EOF_
+fi
+
+# No auth needed by default, the mail server should only accept
+# mail from localhost if authentication is not set.
+if [ -n "${JENKINS_SMTP_USER_NAME}" ] &&
+   [ -n "${JENKINS_SMTP_USER_PASS}" ]; then
+    cat >> ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
+  desc.setSmtpAuth("${JENKINS_SMTP_USER_NAME}", "${JENKINS_SMTP_USER_PASS}")
+_EOF_
+fi
+
+cat > ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
+  desc.save()
+  inst.save()
+_EOF_
+fi
+
+# -----------------------------------------------------------------------
+
 unset JENKINS_ADMIN_USER
 unset JENKINS_ADMIN_PASSWORD
+unset JENKINS_SMTP_USER_NAME
+unset JENKINS_SMTP_USER_PASS
+
+# -----------------------------------------------------------------------
 
 exec /usr/local/bin/jenkins.sh
