@@ -108,7 +108,6 @@ cat > ${JENKINS_HOME}/init.groovy.d/initSMTP.groovy <<_EOF_
   desc.save()
   inst.save()
 _EOF_
-fi
 
 # -----------------------------------------------------------------------
 
