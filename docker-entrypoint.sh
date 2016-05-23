@@ -129,6 +129,36 @@ _EOF_
 fi
 
 # -----------------------------------------------------------------------
+# Set some environment variables.
+#
+# PS4 is used by bash debugging, we make sure that we can reliably mark
+# the debug lines, so they can be filtered out from the output sent to the
+# users
+
+cat > ${JENKINS_HOME}/init.groovy.d/setEnvVars.groovy <<_EOF_
+
+  import jenkins.model.*
+  def instance = Jenkins.getInstance()
+  def globalNodeProperties = instance.getGlobalNodeProperties()
+  def envVarsNodePropertyList = globalNodeProperties.getAll(hudson.slaves.EnvironmentVariablesNodeProperty.class)
+
+  def newEnvVarsNodeProperty = null
+  def envVars = null
+
+  if (envVarsNodePropertyList == null || envVarsNodePropertyList.size() == 0) {
+    newEnvVarsNodeProperty = new hudson.slaves.EnvironmentVariablesNodeProperty();
+    globalNodeProperties.add(newEnvVarsNodeProperty)
+    envVars = newEnvVarsNodeProperty.getEnvVars()
+  } else {
+    envVars = envVarsNodePropertyList.get(0).getEnvVars()
+  }
+
+  envVars.put("PS4", "+R-HUB-R-HUB-R-HUB")
+
+  instance.save()
+_EOF_
+
+# -----------------------------------------------------------------------
 
 unset JENKINS_ADMIN_USER
 unset JENKINS_ADMIN_PASSWORD
