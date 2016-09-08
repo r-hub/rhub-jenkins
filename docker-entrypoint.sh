@@ -154,7 +154,6 @@ cat > ${JENKINS_HOME}/init.groovy.d/setEnvVars.groovy <<_EOF_
   }
 
   envVars.put("PS4", "+R-HUB-R-HUB-R-HUB")
-  envVars.put("JAVA_OPTS", "-Dfile.encoding=UTF-8")
 
   instance.save()
 _EOF_
